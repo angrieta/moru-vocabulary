@@ -62,7 +62,7 @@ function App() {
     clearTimeout(timer.current);stopAudio();setAudioStatus('');setIndex(0);setFlipped(false);setHintVisible(false);setRated({});setLimit(40);
     setSession(makeSession(filterWords(words,{category,query,view,notebook,progress:saved.progress,favorites:saved.favorites,now:Date.now()}),saved.progress,words.length,view==='review'));
     setSessionReady(words.length>0);
-  },[words,category,query,view,notebook,epoch,saved.goal]);
+  },[words,category,query,view,notebook,epoch]);
   useEffect(()=>()=>clearTimeout(timer.current),[]);
   const current = session[index];
   useEffect(()=>{stopAudio();setAudioStatus('');setFlipped(false);setHintVisible(false);},[current?.id]);
