@@ -16,14 +16,15 @@ export function dailyPlan(words, saved, now = Date.now()) {
   return { review,difficult,newWords,newToday,remainingDue:due.length-review.length,words:[...review,...difficult,...newWords] };
 }
 
-export function recordPractice(saved, id, kind, correct, assisted = false, now = Date.now(), { retry = false } = {}) {
+export function recordPractice(saved, id, kind, correct, assisted = false, now = Date.now(), { retry = false, textMode = false, review = false } = {}) {
+  if (kind === 'listening' && textMode) kind = 'meaning';
   const previous = saved.practice?.[id]?.[kind] || { attempts:0,correct:0,independent:0 };
   const result = { attempts:previous.attempts+1,correct:previous.correct+Number(correct),independent:previous.independent+Number(correct&&!assisted),updated:now };
   // Same-session drills do not repeatedly double the spaced-review interval.
   const revised = kind==='speaking' ? saved
     : !correct ? recordReview(saved,id,'again',now)
     : assisted || retry ? recordReview(saved,id,'hard',now)
-    : kind==='meaning' || !saved.progress[id] ? recordReview(saved,id,'good',now)
+    : review || kind==='meaning' || !saved.progress[id] ? recordReview(saved,id,'good',now)
     : saved;
   return { ...revised,practice:{...revised.practice,[id]:{...revised.practice?.[id],[kind]:result}} };
 }
@@ -130,14 +131,14 @@ export function restoreCourse(raw,words,now=Date.now()) {
         const foreign=['reverse','sentence'].includes(step.type);
         if(!choices || choices.length!==4 || choices.some(w=>!w) || !choices.some(w=>w.id===word.id) || new Set(choices.map(w=>normalizeOption(foreign?w.word:w.meaning))).size!==4)throw Error('Invalid choices');
       }
-      return {type:step.type,word,choices,isNew:step.isNew===true,retry:step.retry===true};
+      return {type:step.type,word,choices,isNew:step.isNew===true,retry:step.retry===true,...(step.type==='listening'&&step.textMode===true?{textMode:true}:{})};
     });
     if(!Array.isArray(saved.results) || saved.results.length!==saved.position || saved.results.some((r,i)=>r.type!==course[i].type||!['again','hard','good','skip'].includes(r.rating)))return null;
     const results=saved.results.map((result,i)=>({...result,id:course[i].word.id,retry:course[i].retry,assisted:result.assisted===true,legacy:result.legacy===true||saved.version===1}));
-    return {course,position:saved.position,results};
+    return {course,position:saved.position,results,quietMode:saved.quietMode===true};
   } catch { return null; }
 }
 
-export function serializeCourse(course,position,results,now=Date.now()) {
-  return JSON.stringify({version:2,day:dayKey(new Date(now)),position,results,steps:course.map(step=>({id:step.word.id,type:step.type,isNew:step.isNew===true,retry:step.retry===true,choices:step.choices?.map(w=>w.id)}))});
+export function serializeCourse(course,position,results,now=Date.now(),{quietMode=false}={}) {
+  return JSON.stringify({version:2,day:dayKey(new Date(now)),position,results,quietMode,steps:course.map(step=>({id:step.word.id,type:step.type,isNew:step.isNew===true,retry:step.retry===true,textMode:step.type==='listening'&&step.textMode===true,choices:step.choices?.map(w=>w.id)}))});
 }

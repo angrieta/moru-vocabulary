@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, Lightbulb, Volume2 } from 'lucide-react';
 import ListeningButton from './ListeningButton.jsx';
+import SilentQuestion, { SilentModeButton } from './SilentQuestion.jsx';
 import { audioLabel, playWord, stopAudio } from './audio.js';
 import { exampleWord, matchesWordAnswer, sentenceGap } from './learning.js';
 
@@ -12,8 +13,9 @@ const prompts = {
   speaking: '마지막은 가볍게, 한 문장 따라 말하기',
 };
 
-export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
+export default function PracticeQuestion({ step, audioIndex, speed, onDone, quietMode, onQuietModeChange }) {
   const { type, word, retry } = step;
+  const textMode = type === 'listening' && (quietMode || step.textMode);
   const [choicesOpen, setChoicesOpen] = useState(type === 'listening');
   const [typed, setTyped] = useState('');
   const [result, setResult] = useState(null);
@@ -40,6 +42,12 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
     setBusy(false); setFailed(!ok);
     if (ok) setHeard(true);
   };
+  const useText = () => {
+    if (result) return;
+    token.current++; stopAudio();
+    setBusy(false); setFailed(false); setStatus(''); setHeard(false);
+    onQuietModeChange(true);
+  };
   const complete = (rating, assisted = hint) => {
     if (done.current) return;
     done.current = true;
@@ -47,7 +55,7 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
     onDone(rating, assisted);
   };
   const answer = (correct, details = {}) => {
-    if (result || (type === 'listening' && !heard)) return;
+    if (result || (type === 'listening' && !heard && !textMode)) return;
     setResult({ correct, ...details });
   };
   const submit = event => {
@@ -64,7 +72,7 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
   return <div className="practice-card practice-workspace">
     <div className="practice-prompt">
     {retry && <span className="retry-pill">한 번 더 도전 · 힌트 없이 떠올려요</span>}
-    <span className="eyebrow">{prompts[type]}</span>
+    {!textMode && <span className="eyebrow">{prompts[type]}</span>}
     {type === 'card' && <>
       <h2 lang={word.lang}>{word.word}</h2>
       {word.lang === 'ja' && word.reading !== word.word && <p className="practice-reading">{word.reading}</p>}
@@ -76,12 +84,14 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
       <p className="sentence-translation">{word.exampleKo}</p>
       <h2 className="sentence-gap" lang={word.lang}>{gap.before}<mark>{result ? gap.answer : '________'}</mark>{gap.after}</h2>
     </>}
-    {type === 'listening' && <>
+    {textMode && <SilentQuestion word={word} quietMode={quietMode} onQuietModeChange={onQuietModeChange} locked={!!result}/>}
+    {type === 'listening' && !textMode && <>
       <ListeningButton busy={busy} heard={heard} onClick={() => listen()}/>
       <h2 className="listening-prompt">어떤 뜻일까요?</h2>
       <button className="text-button" disabled={busy} onClick={() => listen(true)}>천천히 다시 듣기 0.75×</button>
       <p className="audio-live" role="status">{status || '먼저 듣기 버튼을 눌러주세요.'}</p>
       {heard && !result && <button className="text-button" onClick={() => setHint(true)}><Lightbulb size={16}/>{hint ? word.word : '글자 힌트 보기'}</button>}
+      {!result && <SilentModeButton onClick={useText}/>}
     </>}
     {type === 'speaking' && <>
       <h2 className="sentence-gap" lang={word.lang}>{word.example}</h2>
@@ -106,14 +116,14 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
     {(foreign || type === 'card') && hintButton}
     {type !== 'speaking' && !result && !choicesOpen && <button className={foreign ? 'secondary-button quiz-show-choices' : 'primary-button'} onClick={() => setChoicesOpen(true)}>{foreign ? '보기로 풀기' : '떠올렸어요 · 보기 열기'}<ArrowRight size={17}/></button>}
     {type !== 'speaking' && choicesOpen && <div className="guided-choices" aria-label="정답 선택">
-      {step.choices.map((option, index) => <button key={option.id} disabled={!!result || (type === 'listening' && !heard)}
+      {step.choices.map((option, index) => <button key={option.id} disabled={!!result || (type === 'listening' && !heard && !textMode)}
         className={result && option.id === word.id ? 'correct' : result?.selectedId === option.id ? 'incorrect' : ''}
         onClick={() => answer(option.id === word.id, { selectedId: option.id })}>
         <span className="choice-number">{index + 1}</span><span lang={foreign ? word.lang : 'ko'}>{foreign ? (option.id === word.id && gap ? gap.answer : option.word) : option.meaning}</span>
         {result && option.id === word.id && <Check size={18} aria-label="정답"/>}
       </button>)}
     </div>}
-    {type !== 'speaking' && !result && (type !== 'listening' || heard) && <button className="text-button quiz-unknown" onClick={() => answer(false, { unknown: true })}>모르겠어요 · 정답 배우기</button>}
+    {type !== 'speaking' && !result && (type !== 'listening' || heard || textMode) && <button className="text-button quiz-unknown" onClick={() => answer(false, { unknown: true })}>모르겠어요 · 정답 배우기</button>}
     {result && <div className={`practice-feedback ${result.correct ? 'answer-correct' : 'answer-learn'}`} role="status">
       <strong>{result.correct ? '맞았어요!' : result.unknown ? '지금 익히면 돼요 🌱' : '정답을 확인해요 🌱'}</strong>
       <p className="correct-answer"><b lang={word.lang}>{word.word}</b><span>{word.meaning}</span></p>
@@ -124,7 +134,7 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
       {type !== 'listening' && audioControls}
       <button className="primary-button" onClick={() => complete(result.correct ? (hint ? 'hard' : 'good') : 'again')}>다음 문제<ArrowRight size={17}/></button>
     </div>}
-    {type === 'listening' && failed && !heard && <button className="text-button" onClick={() => complete('skip')}>재생 없이 건너뛰기</button>}
+    {type === 'listening' && !textMode && failed && !heard && <button className="text-button" onClick={() => complete('skip')}>재생 없이 건너뛰기</button>}
     {type === 'speaking' && <>
       {audioControls}
       <p className="practice-instruction">듣고 소리 내어 따라 말해 보세요.<br/>선택 연습이에요. 퀴즈 점수에는 포함하지 않아요.</p>

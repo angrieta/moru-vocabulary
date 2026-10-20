@@ -162,3 +162,44 @@ test('old course snapshots migrate to quizzes without treating past self-ratings
   const invalid=JSON.parse(old);invalid.results[0].type='reverse';
   assert.equal(restoreCourse(JSON.stringify(invalid),words,now),null);
 });
+
+test('silent listening answers count as meaning practice without adding listening credit',()=>{
+  const heard=recordPractice(defaults(),'en-0','listening',true,false,now);
+  const silent=recordPractice(heard,'en-0','listening',true,false,now+1,{textMode:true});
+  assert.deepEqual(silent.practice['en-0'].listening,heard.practice['en-0'].listening);
+  assert.equal(silent.practice['en-0'].meaning.correct,1);
+  assert.equal(silent.practice['en-0'].meaning.independent,1);
+  const wrong=recordPractice(silent,'en-1','listening',false,false,now+2,{textMode:true});
+  assert.equal(wrong.practice['en-1'].listening,undefined);
+  assert.equal(wrong.practice['en-1'].meaning.correct,0);
+  assert.equal(wrong.progress['en-1'].due,now+2+600000);
+  assert.equal(normalizeState(wrong).practice['en-0'].meaning.independent,1);
+});
+
+test('silent course preferences and revealed questions survive resume and retry',()=>{
+  const steps=words.slice(0,3).map(word=>({type:'listening',word,choices:practiceChoices(word,words),textMode:word.id==='en-0'}));
+  const quiet=restoreCourse(serializeCourse(steps,0,[],now,{quietMode:true}),words,now);
+  assert.equal(quiet.quietMode,true);
+  assert.equal(quiet.course[0].textMode,true);
+  const retry=retryCourse(quiet.course,0,'again');
+  assert.equal(retry.at(-1).textMode,true);
+  const results=[{id:'en-0',type:'listening',rating:'again',textMode:true}];
+  const resumed=restoreCourse(serializeCourse(retry,1,results,now,{quietMode:false}),words,now);
+  assert.equal(resumed.quietMode,false);
+  assert.equal(resumed.course[1].textMode,undefined);
+  assert.equal(resumed.course.at(-1).textMode,true);
+  assert.equal(resumed.results[0].textMode,true);
+  assert.equal(courseScore(resumed.results).total,1);
+  const old=JSON.parse(serializeCourse(steps,0,[],now));delete old.quietMode;
+  assert.equal(restoreCourse(JSON.stringify(old),words,now).quietMode,false);
+});
+
+test('standalone quiz recording preserves review scheduling for listening and silent answers',()=>{
+  const prior=recordReview(defaults(),'en-0','good',now-86400000);
+  const heard=recordPractice(prior,'en-0','listening',true,false,now,{review:true});
+  assert.deepEqual(heard.progress,recordReview(prior,'en-0','good',now).progress);
+  const silent=recordPractice(prior,'en-0','listening',true,false,now,{review:true,textMode:true});
+  assert.deepEqual(silent.progress,heard.progress);
+  assert.equal(silent.practice['en-0'].listening,undefined);
+  assert.equal(silent.practice['en-0'].meaning.correct,1);
+});

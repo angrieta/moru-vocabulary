@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, BookOpen, Check, CircleCheck, Headphones, RefreshCw, Volume2, X } from 'lucide-react';
 import Buddy from './Buddy.jsx';
 import ListeningButton from './ListeningButton.jsx';
-import { quizChoices, recordReview, shuffle } from './model.js';
+import SilentQuestion, { SilentModeButton } from './SilentQuestion.jsx';
+import { quizChoices, shuffle } from './model.js';
+import { recordPractice } from './learning.js';
 import { hasAudioFile, playWord, stopAudio } from './audio.js';
 
 const levels = [['essential','진짜 중요한 단어'],['conversation','바로 쓰는 회화'],['frequent','자주 쓰는 단어'],['advanced','어려운 단어']];
@@ -21,6 +23,9 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
   const [audioFailed,setAudioFailed] = useState(false);
   const [hintShown,setHintShown] = useState(false);
   const [assistedCount,setAssistedCount] = useState(0);
+  const [quietMode,setQuietMode] = useState(false);
+  const [textMode,setTextMode] = useState(false);
+  const [textCount,setTextCount] = useState(0);
   const answerLock = useRef(false);
   const playback = useRef(0);
   const pool = useMemo(() => words.filter(w => w.tags.includes(level) && !w.tags.includes('hiragana') && !w.tags.includes('katakana')), [words,level]);
@@ -36,6 +41,7 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
     setAudioFailed(false);
     setAudioStatus('');
     setHintShown(false);
+    setTextMode(mode === 'listening' && quietMode);
   };
   const start = () => {
     if (!canStart) return;
@@ -45,6 +51,7 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
     setPosition(0);
     setAnswers([]);
     setAssistedCount(0);
+    setTextCount(0);
     setChosen(null);
     answerLock.current = false;
   };
@@ -61,14 +68,21 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
     setAudioFailed(!ok);
     if (ok) setHeard(true);
   };
+  const useText = () => {
+    if (chosen) return;
+    playback.current++; stopAudio();
+    setAudioLoading(false); setAudioFailed(false); setAudioStatus(''); setHeard(false);
+    setTextMode(true); setQuietMode(true);
+  };
   const answer = word => {
-    if (answerLock.current || chosen || !question || (mode === 'listening' && !heard)) return;
+    if (answerLock.current || chosen || !question || (mode === 'listening' && !heard && !textMode)) return;
     answerLock.current = true;
     setChosen(word.id);
     const correct = word.id === question.word.id;
     setAnswers(x => [...x,correct]);
     if (hintShown && correct) setAssistedCount(x=>x+1);
-    setSaved(s => recordReview(s,question.word.id,correct ? (hintShown ? 'hard' : 'good') : 'again'));
+    if (textMode) setTextCount(x=>x+1);
+    setSaved(s => recordPractice(s,question.word.id,mode,correct,hintShown,Date.now(),{textMode,review:true}));
   };
   const next = () => {
     resetAudio();
@@ -96,6 +110,7 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
       <div className="quiz-score">{graded.filter(Boolean).length}<span> / {graded.length}</span></div>
       {skipped > 0 && <p>재생하지 못한 {skipped}문제는 채점과 학습 기록에서 제외했어요.</p>}
       {assistedCount > 0 && <p>힌트로 맞힌 {assistedCount}문제는 더 일찍 복습해요.</p>}
+      {textCount > 0 && <p>소리 없이 푼 {textCount}문제는 뜻 맞히기로 기록했어요.</p>}
       {graded.some(x => !x) && <p>틀린 단어는 오답노트에 저장했어요.<br/>10분 뒤 오늘의 복습에서 다시 만날 수 있어요.</p>}
       <button className="primary-button" onClick={start}>한 번 더 도전하기 <RefreshCw size={16}/></button>
       <button className="text-button" onClick={exit}>퀴즈 선택으로</button>
@@ -116,17 +131,18 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
     </div>
   </div>;
   return <section className="quiz-session">
-    <div className="quiz-top"><span>{mode==='meaning'?'뜻 맞히기':'듣기 퀴즈'}<b>{position+1} / {questions.length}</b></span><button className="text-button" onClick={exit}>그만 풀기 <X size={15}/></button></div>
+    <div className="quiz-top"><span>{textMode?'뜻 맞히기 · 소리 없이':mode==='meaning'?'뜻 맞히기':'듣기 퀴즈'}<b>{position+1} / {questions.length}</b></span><button className="text-button" onClick={exit}>그만 풀기 <X size={15}/></button></div>
     <div className="quiz-progress"><i style={{width:`${position/questions.length*100}%`}}/></div>
-    <div className="quiz-question">{mode==='listening' ? <>
+    <div className="quiz-question">{mode==='listening' && textMode ? <SilentQuestion word={question.word} quietMode={quietMode} onQuietModeChange={setQuietMode} locked={!!chosen}/> : mode==='listening' ? <>
       <ListeningButton busy={audioLoading} heard={heard} onClick={()=>listen()}/>
       <h2 className="listening-prompt">{chosen?question.word.word:'어떤 뜻의 단어일까요?'}</h2>
       <p>소리를 듣고 가장 알맞은 뜻을 골라주세요.</p>
       <span className="audio-live" role="status">{audioStatus || '듣기 버튼을 누르면 답을 고를 수 있어요.'}</span>
       <div className="quiz-audio-recovery"><button className="text-button" disabled={audioLoading} onClick={()=>listen(true)}>천천히 듣기 0.75×</button>{heard&&!chosen&&<button className="text-button" onClick={()=>setHintShown(true)}>{hintShown?question.word.word:'글자 힌트 보기'}</button>}</div>
       {audioFailed && !heard && <div className="quiz-audio-recovery"><button className="text-button" onClick={()=>listen()}><RefreshCw size={15}/>다시 듣기</button><button className="text-button" onClick={skip}>채점 없이 건너뛰기<ArrowRight size={15}/></button></div>}
+      {!chosen && <SilentModeButton onClick={useText}/>}
     </> : <><span className="eyebrow">이 단어의 뜻은?</span><h2 lang={question.word.lang}>{question.word.word}</h2><button className="text-button" disabled={audioLoading} onClick={()=>listen()}><Volume2 size={17}/>발음 듣기</button><span className="audio-live" role="status">{audioStatus}</span></>}</div>
-    <div className="quiz-answer-grid">{question.choices.map((w,i)=><button key={w.id} disabled={!!chosen||(mode==='listening'&&!heard)} className={`${chosen&&w.id===question.word.id?'correct':''} ${chosen===w.id&&w.id!==question.word.id?'incorrect':''}`} onClick={()=>answer(w)}><span>{i+1}</span><strong>{w.meaning}</strong>{chosen&&w.id===question.word.id&&<Check size={20}/>}</button>)}</div>
+    <div className="quiz-answer-grid">{question.choices.map((w,i)=><button key={w.id} disabled={!!chosen||(mode==='listening'&&!heard&&!textMode)} className={`${chosen&&w.id===question.word.id?'correct':''} ${chosen===w.id&&w.id!==question.word.id?'incorrect':''}`} onClick={()=>answer(w)}><span>{i+1}</span><strong>{w.meaning}</strong>{chosen&&w.id===question.word.id&&<Check size={20}/>}</button>)}</div>
     {chosen && <div className="quiz-feedback"><div><strong>{chosen===question.word.id?'정답이에요!':'괜찮아요. 한 번 더 기억하면 돼요.'}</strong><p>{question.word.word} — {question.word.meaning}</p></div><button className="primary-button" onClick={next}>{position===questions.length-1?'결과 보기':'다음 문제'}<ArrowRight size={17}/></button></div>}
   </section>;
 }
