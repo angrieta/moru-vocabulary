@@ -7,8 +7,13 @@ test('forgotten words are due after ten minutes; good recall grows the interval'
   const time=Date.UTC(2026,9,20,3);
   assert.equal(schedule(null,'again',time).due,time+600000);
   const good=schedule(null,'good',time);assert.equal(good.interval,3);
-  assert.equal(schedule(good,'good',time).interval,6);
+  assert.equal(schedule(good,'good',time+3*86400000).interval,6);
+  assert.equal(schedule(good,'good',time+1000).interval,3);
   assert.equal(schedule(good,'hard',time).interval,1);
+  const forgotten=schedule(null,'again',time);
+  const relearned=schedule(forgotten,'good',time+600000);
+  assert.equal(relearned.interval,1,'successful relearning should leave the ten-minute loop');
+  assert.equal(schedule(relearned,'good',time+601000).interval,1);
 });
 test('daily count deduplicates repeated reviews without losing review history',()=>{
   const time=Date.now();let s=recordReview(defaults(),'ja-a','again',time);s=recordReview(s,'ja-a','good',time+1);
