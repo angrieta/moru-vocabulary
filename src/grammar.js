@@ -1,13 +1,41 @@
 import first from './grammar-data.js';
 import middle from './grammar-middle.js';
 import conversation from './grammar-conversation.js';
+import { grammarGroups as foundationGroups, grammarSources as foundationSources } from './grammar-data.js';
+import { expansionGroups, expansionSources, rebuildQuestion, correctionQuestion } from './grammar-expansion.js';
+import extraPractice from './grammar-extra-practice.js';
+import expandedSentences from './grammar-expand-sentences.js';
+import expandedTime from './grammar-expand-time.js';
+import expandedMeaning from './grammar-expand-meaning.js';
+import expandedChat from './grammar-expand-chat.js';
 
-export { grammarGroups, grammarSources } from './grammar-data.js';
-export const grammarLessons = [...first, ...middle, ...conversation].map((lesson, i) => ({
+export const grammarGroups = [...foundationGroups, ...expansionGroups];
+export const grammarSources = { ...foundationSources, ...expansionSources };
+const foundationAlternatives = { past: [[3, 0, 1, 2]], time: [[2, 0, 1]], connectors: [[2, 1, 0]] };
+const foundation = [...first, ...middle, ...conversation].map(lesson => ({
+  ...lesson,
+  questions: [...lesson.questions,
+    rebuildQuestion({ ...lesson, alternatives: foundationAlternatives[lesson.id] }),
+    correctionQuestion(lesson.mistakes[0]), extraPractice[lesson.id]],
+}));
+export const grammarLessons = [...foundation, ...expandedSentences, ...expandedTime, ...expandedMeaning, ...expandedChat].map((lesson, i) => ({
   ...lesson, number: i + 1,
   questions: lesson.questions.map((q, index) => ({ ...q, id: `${lesson.id}-${index}`, lessonId: lesson.id })),
 }));
 export const grammarQuestions = Object.fromEntries(grammarLessons.flatMap(l => l.questions.map(q => [q.id, q])));
+export const grammarExerciseCount = Object.keys(grammarQuestions).length;
+export const grammarCourses = [
+  { id: 'foundation', name: '기초', groups: [0, 1, 2, 3, 4, 5] },
+  { id: 'expansion', name: '문장 확장', groups: [6, 7, 8, 9, 10, 11] },
+  { id: 'chat', name: '실전 채팅', groups: [12, 13] },
+];
+
+export function filterGrammarLessons(course = 'all', query = '') {
+  const groups = grammarCourses.find(c => c.id === course)?.groups;
+  const search = query.trim().toLocaleLowerCase();
+  return grammarLessons.filter(l => (!groups || groups.includes(l.group)) &&
+    (!search || [l.title, l.term, l.goal, l.intro].join(' ').toLocaleLowerCase().includes(search)));
+}
 
 export function shuffledIndices(length, random = Math.random) {
   const indices = Array.from({ length }, (_, i) => i);
@@ -19,9 +47,18 @@ export function shuffledIndices(length, random = Math.random) {
 }
 
 export function sentence(chunks, indices = chunks.map((_, i) => i), punctuation = '.') {
-  const parts = indices.map(i => chunks[i].en);
-  // Let's is sentence-initial in the canonical version, but can follow a time phrase.
-  const text = parts.map((part, i) => i > 0 && part.startsWith("Let's") ? part.replace("Let's", "let's") : part).join(' ');
+  const parts = indices.map((id, position) => {
+    let part = chunks[id].en;
+    // Moving a clause must not leave "There" / "If" capitalized mid-sentence.
+    // Keep I and proper names intact, and preserve starts after full sentences.
+    const afterSentence = position > 0 && /[.!?]$/.test(chunks[indices[position - 1]].en);
+    if (position > 0 && !afterSentence && /^(This|That|These|Those|There|We|You|He|She|It|They|The|Let's|If|When|While|Because|Although)\b/.test(part)) {
+      part = part.charAt(0).toLowerCase() + part.slice(1);
+    }
+    if (position === 0 && indices.length > 1 && /^(If|When|While|Because|Although)\s/i.test(part) && !/[,;.!?]$/.test(part)) part += ',';
+    return part;
+  });
+  const text = parts.join(' ');
   return text.charAt(0).toUpperCase() + text.slice(1) + punctuation;
 }
 
@@ -51,6 +88,7 @@ export function gradeGrammarQuestion(question, answer) {
   return {
     correct, selected: sentence(question.chunks, answer, question.punctuation),
     solution: sentence(question.chunks, correct ? answer : closest, question.punctuation),
+    parts: (correct ? answer : closest).map(i => question.chunks[i]),
     why: correct
       ? `말의 순서를 잘 연결했어요. ${answer.map(i => `${question.chunks[i].en}(${question.chunks[i].ko})`).join(' → ')} 순서로 뜻이 이어져요.`
       : `${different + 1}번째 자리에 ‘${selected.en}’을 놓았어요. 이번 수업에서 익힌 순서로는 ‘${expected.en}’(${expected.role})이 먼저 와요. ${expected.why}`,

@@ -14,6 +14,13 @@
 .grammar-review-button b { margin-left:auto; }
 .grammar-review-button:disabled { color:#7b867b; background:#f5f8f0; }
 .grammar-course-desktop { max-height:60vh; overflow:auto; scrollbar-width:thin; }
+.grammar-course-filters { display:grid; gap:10px; padding:16px 20px 0; }
+.grammar-course-filters label { display:grid; gap:5px; font-size:11px; color:#607665; }
+.grammar-course-filters input,.grammar-course-filters select { width:100%; min-width:0; min-height:42px; padding:9px 10px; border:1px solid #c9dcc2; border-radius:9px; background:#fff; color:#35583e; font:inherit; font-size:13px; }
+.grammar-course-filters input:focus-visible,.grammar-course-filters select:focus-visible { outline:2px solid #458b69; outline-offset:2px; }
+.grammar-course-filters>span { color:#687f62; font-size:11px; }
+.grammar-course-empty { padding:20px; font-size:13px; color:#64775c; }
+.grammar-course-empty button { margin-top:10px; border:1px solid #bcd3b0; background:white; color:#3f713f; border-radius:8px; padding:8px 12px; }
 .grammar-group { padding:14px 10px 0; }
 .grammar-group:last-child { padding-bottom:14px; }
 .grammar-group h3 { padding:0 10px 8px; font-size:11px; color:#71826d; font-weight:600; }
@@ -163,6 +170,7 @@
   .grammar-course-mobile { display:block; }
   .grammar-course-mobile summary { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; cursor:pointer; font-size:13px; }
   .grammar-course-mobile nav { max-height:380px; overflow:auto; }
+  .grammar-course-mobile .grammar-course-filters { padding-top:0; }
   .grammar-course-heading { padding:18px 20px; }
   .grammar-course h2 { font-size:22px; }
   .grammar-course-progress { max-width:200px; }
@@ -172,6 +180,7 @@
   .grammar-lesson-header p { font-size:12px; }
 }
 @media(max-width:580px) {
+  .grammar-course-filters input,.grammar-course-filters select { font-size:16px; }
   .grammar-lesson-header { display:block; padding:22px 18px 18px; }
   .grammar-lesson-header h2 { font-size:27px; }
   .grammar-progress-badge { display:inline-flex; margin-top:13px; }
