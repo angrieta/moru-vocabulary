@@ -1,0 +1,33 @@
+.listening-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 240px;
+  max-width: 100%;
+  min-height: 82px;
+  margin: 20px auto 10px;
+  padding: 12px 20px;
+  border: 2px solid #b2d4a8;
+  border-bottom: 4px solid #95bd89;
+  border-radius: 22px;
+  background: #e3f3db;
+  color: #355e43;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.listening-button-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f5fbef;
+}
+
+.listening-button:not(:disabled):hover { background: #d6edcc; }
+.listening-button:not(:disabled):active { transform: translateY(2px); }
+.listening-button:focus-visible { outline: 3px solid #3d8059; outline-offset: 4px; }
+.listening-button:disabled { cursor: wait; opacity: .7; }

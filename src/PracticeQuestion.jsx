@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Check, Headphones, Lightbulb, Volume2 } from 'lucide-react';
+import { ArrowRight, Check, Lightbulb, Volume2 } from 'lucide-react';
+import ListeningButton from './ListeningButton.jsx';
 import { audioLabel, playWord, stopAudio } from './audio.js';
 import { exampleWord, matchesWordAnswer, sentenceGap } from './learning.js';
 
@@ -76,7 +77,7 @@ export default function PracticeQuestion({ step, audioIndex, speed, onDone }) {
       <h2 className="sentence-gap" lang={word.lang}>{gap.before}<mark>{result ? gap.answer : '________'}</mark>{gap.after}</h2>
     </>}
     {type === 'listening' && <>
-      <button className="listen-orb" onClick={() => listen()} disabled={busy} aria-label="연습 발음 듣기"><Headphones size={38}/></button>
+      <ListeningButton busy={busy} heard={heard} onClick={() => listen()}/>
       <h2 className="listening-prompt">어떤 뜻일까요?</h2>
       <button className="text-button" disabled={busy} onClick={() => listen(true)}>천천히 다시 듣기 0.75×</button>
       <p className="audio-live" role="status">{status || '먼저 듣기 버튼을 눌러주세요.'}</p>

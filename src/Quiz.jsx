@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, BookOpen, Check, CircleCheck, Headphones, RefreshCw, Volume2, X } from 'lucide-react';
 import Buddy from './Buddy.jsx';
+import ListeningButton from './ListeningButton.jsx';
 import { quizChoices, recordReview, shuffle } from './model.js';
 import { hasAudioFile, playWord, stopAudio } from './audio.js';
 
@@ -118,8 +119,8 @@ export default function Quiz({ words, audioIndex, audioLoadState, onRetryAudio, 
     <div className="quiz-top"><span>{mode==='meaning'?'뜻 맞히기':'듣기 퀴즈'}<b>{position+1} / {questions.length}</b></span><button className="text-button" onClick={exit}>그만 풀기 <X size={15}/></button></div>
     <div className="quiz-progress"><i style={{width:`${position/questions.length*100}%`}}/></div>
     <div className="quiz-question">{mode==='listening' ? <>
-      <button className="listen-orb" disabled={audioLoading} aria-busy={audioLoading} onClick={()=>listen()} aria-label={audioLoading?'발음 불러오는 중':'문제 발음 듣기'}><Volume2 size={37}/></button>
-      <h2>{chosen?question.word.word:'어떤 뜻의 단어일까요?'}</h2>
+      <ListeningButton busy={audioLoading} heard={heard} onClick={()=>listen()}/>
+      <h2 className="listening-prompt">{chosen?question.word.word:'어떤 뜻의 단어일까요?'}</h2>
       <p>소리를 듣고 가장 알맞은 뜻을 골라주세요.</p>
       <span className="audio-live" role="status">{audioStatus || '듣기 버튼을 누르면 답을 고를 수 있어요.'}</span>
       <div className="quiz-audio-recovery"><button className="text-button" disabled={audioLoading} onClick={()=>listen(true)}>천천히 듣기 0.75×</button>{heard&&!chosen&&<button className="text-button" onClick={()=>setHintShown(true)}>{hintShown?question.word.word:'글자 힌트 보기'}</button>}</div>
