@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-20",
+  "ja": {
+    "total": 8130,
+    "words": 7922,
+    "curated": 129,
+    "withReading": 8130,
+    "withHint": 8130,
+    "withExample": 129,
+    "tags": {
+      "essential": 129,
+      "conversation": 48,
+      "frequent": 1040,
+      "advanced": 1549,
+      "hiragana": 104,
+      "katakana": 104
+    }
+  },
+  "en": {
+    "total": 20004,
+    "words": 20004,
+    "curated": 127,
+    "withReading": 17182,
+    "withHint": 16445,
+    "withExample": 127,
+    "tags": {
+      "essential": 127,
+      "conversation": 46,
+      "frequent": 3007,
+      "advanced": 13238,
+      "hiragana": 0,
+      "katakana": 0
+    }
+  },
+  "total": 28134,
+  "note": "기초 추천 순서는 편집한 학습 순서이며 공식 빈도 순위가 아닙니다. 확장 어휘는 공개사전이며 전체 전문가 검수를 거치지 않았습니다. 한글 발음은 근사치입니다. 음성은 별도 브라우저 음성 합성입니다."
+}

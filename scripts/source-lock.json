@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-20",
+  "files": [
+    {
+      "name": "en.json",
+      "url": "https://raw.githubusercontent.com/jhseo1211/open-english-korean-dict/92cbfe63deee1ccead2c42677027d8b4a305b2c7/dict/words.json",
+      "sha256": "31dae7ed8693c3ae232530ee14caadbe47d2ffb898638d12e94aeb5aab22ecf9"
+    },
+    {
+      "name": "ja-wiki.jsonl",
+      "url": "https://kaikki.org/kowiktionary/%EC%9D%BC%EB%B3%B8%EC%96%B4/kaikki.org-dictionary-%EC%9D%BC%EB%B3%B8%EC%96%B4.jsonl",
+      "sha256": "58a767817cc182243f7a3184a99a1281c0f5bfe98d1faed28bcd275e5e56b6d3"
+    },
+    {
+      "name": "jlpt-n1.csv",
+      "url": "https://raw.githubusercontent.com/ringooai/open-vocabularies/8ab476e12142e0bd70b7e92247a6c8c0e8648fac/data/ja/jlpt-n1.csv",
+      "sha256": "120911636c019899552aa6d7bd64b036ecef4bedfe272a744f75735c46aae5cd"
+    },
+    {
+      "name": "jlpt-n2.csv",
+      "url": "https://raw.githubusercontent.com/ringooai/open-vocabularies/8ab476e12142e0bd70b7e92247a6c8c0e8648fac/data/ja/jlpt-n2.csv",
+      "sha256": "2d0f1ddd6222881cd9fc2ca701db74300af99b3f1f84d5ac3c18411c20f0c055"
+    },
+    {
+      "name": "jlpt-n3.csv",
+      "url": "https://raw.githubusercontent.com/ringooai/open-vocabularies/8ab476e12142e0bd70b7e92247a6c8c0e8648fac/data/ja/jlpt-n3.csv",
+      "sha256": "ba071571d344e60b0e1fd11cd2e98a6aaa04515361653ca45147129460531297"
+    },
+    {
+      "name": "jlpt-n4.csv",
+      "url": "https://raw.githubusercontent.com/ringooai/open-vocabularies/8ab476e12142e0bd70b7e92247a6c8c0e8648fac/data/ja/jlpt-n4.csv",
+      "sha256": "0e835f40a8d2a1f191d7aa499076002756fa099b95634758376f43c73793e9f6"
+    },
+    {
+      "name": "jlpt-n5.csv",
+      "url": "https://raw.githubusercontent.com/ringooai/open-vocabularies/8ab476e12142e0bd70b7e92247a6c8c0e8648fac/data/ja/jlpt-n5.csv",
+      "sha256": "f89abc86b391c4f2b551bbf8910b0de6cd600973b3a9f8d98347513921929ebe"
+    }
+  ]
+}
