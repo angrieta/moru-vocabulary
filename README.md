@@ -45,6 +45,8 @@ npm run preview
 
 `.github/workflows/pages.yml`이 `main`에 push할 때 테스트·빌드 후 GitHub Pages에 배포합니다. 저장소 Settings → Pages → Source가 **GitHub Actions**여야 합니다. Vite의 상대 경로 설정 덕분에 저장소 하위 경로에서도 동작합니다.
 
+카카오톡 등 링크 공유 미리보기는 `index.html`의 Open Graph 태그와 `public/social/moru-share-v1.png`를 사용합니다. 공유 이미지는 내장 이미지 생성 도구로 제작했으며 프롬프트는 `design/moru-share-prompt.txt`에 있습니다. 도메인이나 저장소 이름을 바꾸면 canonical·Open Graph·Twitter 태그의 절대 주소도 함께 바꾸세요.
+
 ## 데이터 범위와 품질
 
 | 데이터 | 개수 |
@@ -84,7 +86,7 @@ AI 합성은 일본어·기초 영어·예문에 Kokoro, 영어 확장 어휘에
 - `src/model.js` — 복습 일정·검색·백업 병합
 - `src/audio.js` — 사람·AI 음성 파일, 기기 음성 대안, 재생 확인·취소
 - `src/Buddy.jsx` — 이 프로젝트의 새싹 캐릭터
-- `src/style.css`, `src/playful.css` — 반응형 구조와 귀여운 디자인
+- `src/style.css`, `src/playful.css`, `src/today.css`, `src/desktop.css` — 반응형 구조와 귀여운 디자인, 넓은 PC 학습 화면
 - `public/data/` — 단어 및 음성 메타데이터
 - `scripts/build-data.mjs` — 고정 스냅샷에서 데이터 재생성
 - `scripts/bundle-audio.mjs`, `scripts/build-synthetic-audio.py` — 녹음 번들·합성 생성과 검사

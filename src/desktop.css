@@ -1,0 +1,150 @@
+/* Keep the existing mobile layout; give desktop screens a fluid study area. */
+@media (min-width: 1201px) {
+  .workspace {
+    --page-gutter: clamp(28px, 2.4vw, 52px);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    flex-shrink: 0;
+    padding-inline: var(--page-gutter);
+  }
+
+  main {
+    width: 100%;
+    max-width: 1920px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 28px var(--page-gutter) 0;
+  }
+
+  .page-heading {
+    flex-shrink: 0;
+    min-height: 132px;
+    margin-bottom: 24px;
+  }
+
+  .page-heading h1 { font-size: clamp(34px, 2.3vw, 44px); }
+  .page-heading p { font-size: 14px; line-height: 1.8; }
+  .page-footer { margin-top: auto; padding-block: 22px; }
+
+  .quiz-start-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 0;
+    min-height: 520px;
+    margin: 0 0 28px;
+    padding: 0;
+    border: 1px solid #dce8dd;
+    border-bottom: 4px solid #d3e3d3;
+    border-radius: 28px;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .quiz-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(32px, 2.8vw, 52px);
+    background: #edf7ed;
+    border-right: 1px solid #dce8dd;
+  }
+
+  .quiz-intro h2 {
+    margin-top: 13px;
+    font-size: clamp(36px, 2.7vw, 52px);
+    line-height: 1.4;
+    letter-spacing: -1px;
+    color: #355e43;
+  }
+
+  .quiz-intro h2 em { color: #57915c; }
+  .quiz-intro > p { font-size: 15px; line-height: 1.9; color: #617d62; }
+  .quiz-intro .eyebrow { color: #5f8464; }
+  .quiz-illustration { width: 230px; height: 184px; margin-top: auto; padding-top: 18px; }
+  .quiz-illustration .moru-buddy { width: 205px; height: 182px; }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(32px, 2.8vw, 52px);
+  }
+
+  .quiz-options .field-label { font-size: 14px; font-weight: 700; color: #4d7157; }
+  .quiz-option { min-height: 90px; padding: 20px 24px; border-radius: 17px; }
+  .quiz-option strong { font-size: 17px; color: #48694d; }
+  .quiz-option small { font-size: 13px; color: #718676; line-height: 1.6; }
+  .quiz-option.selected { background: #e9f5e7; border-color: #a7c99a; }
+  .quiz-options select { min-height: 49px; font-size: 14px; border-radius: 12px; color: #4d7157; }
+  .quiz-options .form-note { font-size: 12px; color: #718676; }
+  .quiz-options > .primary-button { min-height: 54px; font-size: 15px; padding-inline: 23px; background: #3d8059; border-bottom-color: #2b6645; }
+  .quiz-options > .primary-button:hover { background: #326e4b; }
+
+  .quiz-session {
+    width: 100%;
+    max-width: none;
+    margin: 0 0 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 1fr);
+    gap: 22px 28px;
+    align-items: stretch;
+  }
+
+  .quiz-top, .quiz-progress, .quiz-feedback { grid-column: 1 / -1; }
+  .quiz-top > span { font-size: 16px; }
+  .quiz-top b { font-size: 14px; }
+  .quiz-top .text-button { font-size: 13px; }
+  .quiz-progress { margin: -10px 0 0; height: 7px; }
+  .quiz-question { margin: 0; min-height: 420px; padding: 30px; border-radius: 26px; }
+  .quiz-question h2 { max-width: 100%; font-size: clamp(42px, 3.4vw, 64px); overflow-wrap: anywhere; text-align: center; }
+  .quiz-question .listen-orb + h2 { font-size: clamp(24px, 1.9vw, 34px); }
+  .quiz-question > p, .quiz-question .text-button { font-size: 14px; }
+  .quiz-question .audio-live { font-size: 12px; }
+  .quiz-answer-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, minmax(86px, 1fr)); gap: 14px; }
+  .quiz-answer-grid > button { padding: 22px 26px; gap: 18px; border-radius: 19px; }
+  .quiz-answer-grid > button > span { width: 34px; height: 34px; font-size: 13px; border-radius: 11px; }
+  .quiz-answer-grid strong { font-size: 17px; line-height: 1.7; color: #4d7055; }
+  .quiz-feedback { margin-top: 0; padding: 22px 26px; border-radius: 18px; }
+  .quiz-feedback strong { font-size: 16px; }
+  .quiz-feedback p { font-size: 14px; line-height: 1.7; }
+  .quiz-feedback .primary-button { font-size: 14px; }
+
+  .today-grid {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: minmax(0, 1fr) minmax(285px, 360px);
+    gap: 28px;
+    margin-bottom: 28px;
+  }
+
+  .today-plan { padding: 36px 40px; }
+  .today-plan h2 { font-size: clamp(32px, 2.3vw, 43px); }
+  .today-plan-top { font-size: 14px; }
+  .today-plan > p { font-size: 15px; }
+  .learning-grid, .stats-layout { grid-template-columns: minmax(0, 1fr) minmax(270px, 320px); gap: 30px; margin-bottom: 28px; }
+  .guided-session { width: min(100%, 1280px); max-width: none; margin: 0 auto 30px; }
+  .guided-top { font-size: 15px; }
+  .journey-tabs > span { font-size: 12px; padding: 9px 14px; }
+  .practice-card { padding: 40px clamp(30px, 4vw, 76px); }
+  .practice-card h2 { font-size: 54px; }
+  .practice-card h2.korean-prompt { font-size: 36px; }
+  .practice-instruction { font-size: 15px; }
+  .guided-choices button { font-size: 16px; min-height: 78px; }
+}
+
+@media (min-width: 1201px) and (max-height: 800px) {
+  .page-heading { min-height: 110px; margin-bottom: 20px; }
+  .quiz-start-layout { min-height: 460px; }
+  .quiz-intro, .quiz-options { padding-block: 28px; }
+  .quiz-illustration { height: 135px; }
+  .quiz-illustration .moru-buddy { width: 170px; height: 150px; }
+  .quiz-option { min-height: 78px; padding-block: 16px; }
+}
+
+@media (max-width: 580px) {
+  .page-heading h1 { word-break: keep-all; text-wrap: balance; }
+}

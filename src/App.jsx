@@ -7,6 +7,7 @@ import './playful.css';
 import Buddy from './Buddy.jsx';
 import Quiz from './Quiz.jsx';
 import Today, { Growth } from './Today.jsx';
+import './desktop.css';
 
 const categories = [ ['essential','진짜 중요한 단어',Sparkles], ['conversation','바로 쓰는 회화',MessageCircle], ['frequent','자주 쓰는 단어',TrendingUp], ['advanced','어려운 단어',GraduationCap], ['all','전체 단어',Layers] ];
 const navItems = [['today','오늘의 학습',Sparkles],['study','단어 학습',Layers],['review','오늘의 복습',RotateCcw],['quiz','실력 확인 퀴즈',Headphones],['notebook','나의 단어장',Bookmark],['stats','학습 기록',ChartNoAxesColumnIncreasing]];
