@@ -5,6 +5,12 @@
 @media(max-width:580px){.breadcrumb>span,.breadcrumb>svg{display:none}.breadcrumb{gap:0}.breadcrumb strong{font-size:17px}}
 
 .practice-card>.eyebrow{display:block;line-height:1.8}
+.practice-prompt>.eyebrow{display:block;line-height:1.8}
+.practice-response>.primary-button{margin:22px auto 0}
+.practice-response>.text-button{display:flex;margin:15px auto;justify-content:center}
+.recall-invitation>svg{color:#91b47a;margin-bottom:12px}
+.recall-invitation h3{font-size:21px;color:#42684d;margin:0}
+.recall-invitation .practice-instruction{margin:14px 0}
 .retry-pill{display:inline-flex;margin:0 0 17px;padding:8px 14px;border-radius:99px;background:#fff4d9;color:#876b32;font-size:11px;font-weight:700}
 .retry-note{text-align:center;color:#8a937f;font-size:11px;line-height:1.8;margin:20px 0}
 .quiz-answer-form .primary-button,.quiz-show-choices{margin:12px auto;justify-content:center}

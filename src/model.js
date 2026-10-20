@@ -1,5 +1,6 @@
+import { normalizeWriting } from './writing.js';
 export const STORAGE_KEY = 'moru-learning-v1';
-export const defaults = () => ({ version: 1, lang: 'ja', goal: 20, newWordLimit: 10, hints: true, speed: 1, progress: {}, practice: {}, favorites: [], days: {} });
+export const defaults = () => ({ version: 1, lang: 'ja', goal: 20, newWordLimit: 10, hints: true, speed: 1, progress: {}, practice: {}, writing: {}, favorites: [], days: {} });
 export function dayKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
@@ -26,7 +27,7 @@ export function normalizeState(raw) {
       practice[id][kind] = { attempts:p.attempts, correct:Math.max(0,Math.min(p.attempts,Number(p.correct)||0)), independent:Math.max(0,Math.min(p.attempts,Number(p.independent)||0)), updated:p.updated };
     }
   }
-  return { ...base, lang: raw.lang === 'en' ? 'en' : 'ja', goal: [10,20,30,50].includes(raw.goal) ? raw.goal : 20, newWordLimit:[5,10,15].includes(raw.newWordLimit)?raw.newWordLimit:10, hints: raw.hints !== false, speed: [.75,1,1.25].includes(raw.speed) ? raw.speed : 1, progress, practice, favorites: [...new Set((Array.isArray(raw.favorites) ? raw.favorites : []).filter(x => typeof x === 'string' && /^(ja|en)-/.test(x)))], days };
+  return { ...base, lang: raw.lang === 'en' ? 'en' : 'ja', goal: [10,20,30,50].includes(raw.goal) ? raw.goal : 20, newWordLimit:[5,10,15].includes(raw.newWordLimit)?raw.newWordLimit:10, hints: raw.hints !== false, speed: [.75,1,1.25].includes(raw.speed) ? raw.speed : 1, progress, practice, writing: normalizeWriting(raw.writing), favorites: [...new Set((Array.isArray(raw.favorites) ? raw.favorites : []).filter(x => typeof x === 'string' && /^(ja|en)-/.test(x)))], days };
 }
 export function readState(storage) {
   try { const raw = storage.getItem(STORAGE_KEY); return { data: raw ? normalizeState(JSON.parse(raw)) : defaults(), error: null }; }
@@ -54,7 +55,9 @@ export function mergeState(current, incoming) {
     practice[id] = { ...practice[id] };
     for (const [kind,p] of Object.entries(skills)) if (!practice[id][kind] || p.updated > practice[id][kind].updated) practice[id][kind] = p;
   }
-  return { ...current, progress, practice, days, favorites: [...new Set([...current.favorites, ...clean.favorites])] };
+  const writing = {...current.writing};
+  for (const [char, value] of Object.entries(clean.writing)) if (!writing[char] || value.updated > writing[char].updated) writing[char] = value;
+  return { ...current, progress, practice, writing, days, favorites: [...new Set([...current.favorites, ...clean.favorites])] };
 }
 export function filterWords(words, { category = 'essential', query = '', view = 'study', notebook = 'favorites', progress = {}, favorites = [], now = Date.now() }) {
   const term = query.trim().toLocaleLowerCase();
