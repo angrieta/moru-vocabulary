@@ -3,3 +3,30 @@
 @media(max-width:700px){.today-grid{display:block}.today-plan,.memory-garden,.course-map{padding:23px 20px;border-radius:22px}.today-plan h2{font-size:27px}.today-aside{margin:22px 0}.today-tip>svg{width:65px;min-width:65px}.new-word-settings{flex-direction:row;align-items:center;flex-wrap:wrap}.plan-counts{gap:8px}.plan-counts>div{padding:17px 7px}.course-stages{grid-template-columns:repeat(3,1fr);row-gap:22px}.course-stages strong{font-size:11px}.course-map h2{font-size:19px}.practice-card{padding:28px 18px;border-radius:23px;min-height:390px}.practice-card h2{font-size:34px}.practice-card h2.korean-prompt{font-size:25px}.practice-card h2.sentence-gap{font-size:23px}.practice-rating{gap:9px}.practice-rating button{font-size:11px;padding:14px 8px;gap:5px}.guided-choices{grid-template-columns:1fr;gap:10px}.guided-choices button{min-height:57px;font-size:13px}.journey-tabs{gap:5px}.journey-tabs>span{font-size:9px;padding:7px 9px}.guided-top{font-size:11px}.practice-input{font-size:13px;padding:15px 10px}.practice-instruction{font-size:12px}.practice-card .primary-button{font-size:12px}.today-plan .primary-button{font-size:14px}.memory-garden>p{font-size:11px}.today-finish>h2{font-size:24px}.today-finish>p{font-size:12px}}
 
 @media(max-width:580px){.breadcrumb>span,.breadcrumb>svg{display:none}.breadcrumb{gap:0}.breadcrumb strong{font-size:17px}}
+
+.practice-card>.eyebrow{display:block;line-height:1.8}
+.retry-pill{display:inline-flex;margin:0 0 17px;padding:8px 14px;border-radius:99px;background:#fff4d9;color:#876b32;font-size:11px;font-weight:700}
+.retry-note{text-align:center;color:#8a937f;font-size:11px;line-height:1.8;margin:20px 0}
+.quiz-answer-form .primary-button,.quiz-show-choices{margin:12px auto;justify-content:center}
+.quiz-answer-form .practice-input{margin-bottom:12px}
+.practice-card>.quiz-hint,.practice-card>.quiz-unknown{display:flex;margin:15px auto}
+.quiz-unknown{font-size:12px;color:#7b897f}
+.guided-choices button{display:flex;align-items:center;gap:12px;text-align:left}
+.guided-choices button>span:nth-child(2){flex:1;overflow-wrap:anywhere}
+.guided-choices button>svg{flex-shrink:0}
+.choice-number{display:grid;place-items:center;flex-shrink:0;width:25px;height:25px;border-radius:8px;background:#f1f6f2;color:#7e9885;font-size:11px}
+.guided-choices button:not(:disabled):hover{background:#f0f8f2;border-color:#a9cdb4}
+.practice-feedback{border-radius:19px;padding:23px 20px;background:#f1f9f3}
+.practice-feedback.answer-learn{background:#fff8ed;color:#896b40}
+.practice-feedback>strong{font-size:19px}
+.practice-feedback .correct-answer{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 16px}
+.correct-answer b{font-size:24px}
+.correct-answer span{font-size:15px;line-height:1.8}
+.practice-feedback .feedback-example{padding-top:13px;border-top:1px dashed #d9e3d6;font-size:12px;color:#718170}
+.practice-feedback .feedback-example span{font-size:15px}
+.course-score{margin:25px auto 18px;padding:25px;border:1px solid #dcebdc;border-radius:23px;background:#f2faf1}
+.course-score>span{font-size:13px;color:#63825b}
+.course-score>strong{display:block;font-size:54px;color:#4a8353;margin:14px 0}
+.course-score small{font-size:25px;font-weight:500;color:#8da789}
+.course-score p{font-size:12px;line-height:1.8;color:#71886c;margin:0}
+@media(max-width:700px){.practice-feedback{padding:21px 15px}.guided-choices button{padding:13px}.correct-answer b{font-size:22px}.practice-card>.eyebrow{font-size:10px}.quiz-answer-form .primary-button{width:100%;justify-content:center}}

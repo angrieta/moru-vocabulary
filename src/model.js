@@ -20,7 +20,7 @@ export function normalizeState(raw) {
   for (const [id, skills] of Object.entries(raw.practice || {})) {
     if (!/^(ja|en)-/.test(id) || !skills || typeof skills !== 'object') continue;
     practice[id] = {};
-    for (const kind of ['reverse','listening','sentence','speaking']) {
+    for (const kind of ['meaning','reverse','listening','sentence','speaking']) {
       const p = skills[kind];
       if (!p || !Number.isSafeInteger(p.attempts) || p.attempts < 1 || !Number.isFinite(p.updated)) continue;
       practice[id][kind] = { attempts:p.attempts, correct:Math.max(0,Math.min(p.attempts,Number(p.correct)||0)), independent:Math.max(0,Math.min(p.attempts,Number(p.independent)||0)), updated:p.updated };
